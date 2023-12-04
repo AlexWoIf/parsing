@@ -1,5 +1,6 @@
 import re
 import os
+import argparse
 from pathlib import Path
 import requests
 from bs4 import BeautifulSoup
@@ -26,9 +27,10 @@ def parse_book_page(html):
         return
     return {
         'file_url': file_link['href'],
-        'title': file_link['title'][:-20],
         'img_src': soup.find('div', {'class': 'bookimage'})
                        .find('img').get('src'),
+        'title': file_link['title'][:-20],
+        'author': soup.find('h1').find('a').text,
         'comments': [c.text for c in soup.select('div[class=texts] > span')],
         'genres': [a.text for a in soup.select('span.d_book > a')],
     }
@@ -74,9 +76,20 @@ def download_image(url, filename, folder=BOOK_DIR):
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description='Парсер скачивает книги с сайта tululu.org '
+                    'в указанном диапазоне id')
+    parser.add_argument('--start_id', type=int,
+                        help='Стартовый id для парсинга', default=1, )
+    parser.add_argument('--end_id', type=int,
+                        help='Последний id для парсинга', default=10, )
+    args = parser.parse_args()
+    if args.start_id > args.end_id:
+        parser.error('Стартовый id не может быть меньше конечного.')
+
     Path(BOOK_DIR).mkdir(parents=True, exist_ok=True)
     Path(IMAGE_DIR).mkdir(parents=True, exist_ok=True)
-    for id in range(1, 11):
+    for id in range(args.start_id, args.end_id+1):
         try:
             res = get_post_page(urljoin(SITE_URL, f'{POST_URL}{id}/'))
             page_data = parse_book_page(res.text)
@@ -84,7 +97,7 @@ if __name__ == "__main__":
                 print('not found')
                 continue
             print(page_data)
-            file_url, title, img_url, *_ = page_data.values()
+            file_url, img_url, title, *_ = page_data.values()
             download_txt(urljoin(SITE_URL, file_url), f'{id}. {title}')
             download_image(urljoin(SITE_URL, img_url), '', IMAGE_DIR)
         except requests.exceptions.HTTPError:
