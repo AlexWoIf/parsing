@@ -12,7 +12,6 @@ IMAGE_DIR = 'images/'
 SITE_URL = 'https://tululu.org/'
 DOWNLOAD_URL = '/txt.php?id='
 POST_URL = '/b'
-TITLE_DELIMITER = ' \xa0 :: \xa0 '
 
 
 def check_for_redirect(response):
@@ -94,12 +93,9 @@ if __name__ == "__main__":
             res = get_post_page(urljoin(SITE_URL, f'{POST_URL}{id}/'))
             page_data = parse_book_page(res.text)
             if not page_data:
-                print('not found')
                 continue
-            print(page_data)
             file_url, img_url, title, *_ = page_data.values()
             download_txt(urljoin(SITE_URL, file_url), f'{id}. {title}')
             download_image(urljoin(SITE_URL, img_url), '', IMAGE_DIR)
         except requests.exceptions.HTTPError:
-            print('HTTP error')
             continue
