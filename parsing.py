@@ -24,14 +24,14 @@ def parse_post_page(html):
     file_link = soup.find('a', string='скачать txt')
     if not file_link:
         return
-    file_url = file_link['href']
-    title = file_link['title'][:-20]
-    img_src = soup.find('div', {'class': 'bookimage'}).find('img')['src']
-    comments = [c.text for c in soup.select('div[class=texts] > span')]
-    return {'file_url': file_url,
-            'title': title,
-            'img_src': img_src,
-            'comments': comments, }
+    return {
+        'file_url': file_link['href'],
+        'title': file_link['title'][:-20],
+        'img_src': soup.find('div', {'class': 'bookimage'})
+                       .find('img').get('src'),
+        'comments': [c.text for c in soup.select('div[class=texts] > span')],
+        'genres': [a.text for a in soup.select('span.d_book > a')],
+    }
 
 
 def get_post_page(url):
@@ -84,7 +84,7 @@ if __name__ == "__main__":
                 print('not found')
                 continue
             print(page_data)
-            file_url, title, img_url, comments = page_data.values()
+            file_url, title, img_url, *_ = page_data.values()
             download_txt(urljoin(SITE_URL, file_url), f'{id}. {title}')
             download_image(urljoin(SITE_URL, img_url), '', IMAGE_DIR)
         except requests.exceptions.HTTPError:
