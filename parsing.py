@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 import requests
 from bs4 import BeautifulSoup
-from urllib.parse import urljoin, urlsplit
+from urllib.parse import urljoin
 
 
 BOOK_DIR = 'books/'
@@ -27,15 +27,16 @@ def parse_post_page(html):
     file_url = file_link['href']
     title = file_link['title'][:-20]
     img_src = soup.find('div', {'class': 'bookimage'}).find('img')['src']
+    comments = [c.text for c in soup.select('div[class=texts] > span')]
     return {'file_url': file_url,
             'title': title,
-            'img_src': img_src, }
+            'img_src': img_src,
+            'comments': comments, }
 
 
 def get_post_page(url):
     res = requests.get(url)
     res.raise_for_status()
-    print(res.history)
     check_for_redirect(res)
     return res
 
@@ -83,7 +84,7 @@ if __name__ == "__main__":
                 print('not found')
                 continue
             print(page_data)
-            file_url, title, img_url = page_data.values()
+            file_url, title, img_url, comments = page_data.values()
             download_txt(urljoin(SITE_URL, file_url), f'{id}. {title}')
             download_image(urljoin(SITE_URL, img_url), '', IMAGE_DIR)
         except requests.exceptions.HTTPError:
