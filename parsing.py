@@ -19,7 +19,7 @@ def check_for_redirect(response):
         raise requests.exceptions.HTTPError
 
 
-def parse_post_page(html):
+def parse_book_page(html):
     soup = BeautifulSoup(html, 'lxml')
     file_link = soup.find('a', string='скачать txt')
     if not file_link:
@@ -79,7 +79,7 @@ if __name__ == "__main__":
     for id in range(1, 11):
         try:
             res = get_post_page(urljoin(SITE_URL, f'{POST_URL}{id}/'))
-            page_data = parse_post_page(res.text)
+            page_data = parse_book_page(res.text)
             if not page_data:
                 print('not found')
                 continue
