@@ -78,7 +78,7 @@ if __name__ == "__main__":
                         help='Последний id для парсинга', default=10, )
     args = parser.parse_args()
     if args.start_id > args.end_id:
-        parser.error('Стартовый id не может быть меньше конечного.')
+        parser.error('Стартовый id не может быть больше конечного.')
 
     logging.basicConfig(level=logging.INFO)
 
