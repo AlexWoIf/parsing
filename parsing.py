@@ -93,8 +93,8 @@ if __name__ == "__main__":
                 response.raise_for_status()
                 check_for_redirect(response)
 
-                page_data = parse_book_page(response.text)
-                file_url, img_url, title, *_ = page_data.values()
+                book = parse_book_page(response.text)
+                file_url, img_url, title, *_ = book.values()
                 download_txt(
                     urljoin(book_url, file_url), f'{book_id}. {title}'
                 )
