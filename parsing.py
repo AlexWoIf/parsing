@@ -16,20 +16,20 @@ SITE_URL = 'https://tululu.org/'
 
 def check_for_redirect(response):
     if response.history:
-        logging.warning(
+        raise requests.exceptions.HTTPError(
                 f'{response.history[0].url} не существует. '
-                f'Перенаправлены на {response.url}')
-        raise requests.exceptions.HTTPError
+                f'Перенаправлены на {response.url}'
+        )
 
 
 def parse_book_page(html):
     soup = BeautifulSoup(html, 'lxml')
     file_link = soup.find('a', string='скачать txt')
     if not file_link:
-        logging.warning(
+        raise requests.exceptions.HTTPError(
                 f'На странице книги {response.request.url} '
-                f'нет ссылки на скачивание файла.')
-        raise requests.exceptions.HTTPError
+                f'нет ссылки на скачивание файла.'
+        )
     return {
         'file_url': file_link['href'],
         'img_src': soup.find('div', {'class': 'bookimage'})
@@ -102,7 +102,8 @@ if __name__ == "__main__":
 
                 delay = 0
                 break
-            except requests.exceptions.HTTPError:
+            except requests.exceptions.HTTPError as e:
+                logging.warning(e)
                 delay = 0
                 break
             except requests.exceptions.ConnectionError:
