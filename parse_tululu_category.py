@@ -34,8 +34,9 @@ if __name__ == "__main__":
         try:
             book = grab_book(book_url)
             books.append(book)
+            break
         except requests.exceptions.HTTPError as e:
             logging.warning(e)
 
-    with open('books.json', 'w', encoding="CP1251") as my_file:
-        my_file.write(json.dumps(books))
+    with open('books.json', 'w') as json_file:
+        json.dump(books, json_file, ensure_ascii=False)
