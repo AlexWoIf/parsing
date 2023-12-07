@@ -18,7 +18,7 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
 
     book_urls = []
-    for page in range(1, 2):
+    for page in range(1, 5):
         url = urljoin(SCIFI_URL, str(page)+'/')
         response = requests.get(url)
         response.raise_for_status()
@@ -34,7 +34,6 @@ if __name__ == "__main__":
         try:
             book = grab_book(book_url)
             books.append(book)
-            break
         except requests.exceptions.HTTPError as e:
             logging.warning(e)
 
