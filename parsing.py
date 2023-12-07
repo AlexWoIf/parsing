@@ -14,6 +14,21 @@ IMAGE_DIR = 'images/'
 SITE_URL = 'https://tululu.org/'
 
 
+def retry(func):
+    def _wrapper(*args, **kwargs):
+        delay = 0
+        while True:
+            try:
+                func(*args, **kwargs)
+                break
+            except requests.exceptions.ConnectionError:
+                logging.warning('Сеть недоступна, пробуем еще раз. '
+                                f'Задержка перед попыткой {delay} секунд.')
+                sleep(delay)
+                delay += 5
+    return _wrapper
+
+
 def check_for_redirect(response):
     if response.history:
         raise requests.exceptions.HTTPError(
@@ -68,6 +83,7 @@ def download_image(url, filename, folder=BOOK_DIR):
     return filepath
 
 
+@retry
 def grab_book(book_url):
     try:
         response = requests.get(book_url)
@@ -102,15 +118,5 @@ if __name__ == "__main__":
     Path(BOOK_DIR).mkdir(parents=True, exist_ok=True)
     Path(IMAGE_DIR).mkdir(parents=True, exist_ok=True)
     for book_id in range(args.start_id, args.end_id+1):
-        delay = 0
-        while True:
-            try:
-                book_url = urljoin(SITE_URL, f'/b{book_id}/')
-                grab_book(book_url)
-                delay = 0
-                break
-            except requests.exceptions.ConnectionError:
-                logging.warning('Сеть недоступна, пробуем еще раз. '
-                                f'Задержка перед попыткой {delay}секунд.')
-                sleep(delay)
-                delay += 5
+        book_url = urljoin(SITE_URL, f'/b{book_id}/')
+        grab_book(book_url)
