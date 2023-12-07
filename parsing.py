@@ -68,6 +68,23 @@ def download_image(url, filename, folder=BOOK_DIR):
     return filepath
 
 
+def grab_book(book_url):
+    try:
+        response = requests.get(book_url)
+        response.raise_for_status()
+        check_for_redirect(response)
+
+        book = parse_book_page(response)
+        file_url, img_url, title, *_ = book.values()
+        download_txt(
+            urljoin(book_url, file_url), f'{book_id}. {title}'
+        )
+        download_image(urljoin(book_url, img_url), '', IMAGE_DIR)
+        return book
+    except requests.exceptions.HTTPError as e:
+        logging.warning(e)
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description='Парсер скачивает книги с сайта tululu.org '
@@ -89,21 +106,7 @@ if __name__ == "__main__":
         while True:
             try:
                 book_url = urljoin(SITE_URL, f'/b{book_id}/')
-                response = requests.get(book_url)
-                response.raise_for_status()
-                check_for_redirect(response)
-
-                book = parse_book_page(response)
-                file_url, img_url, title, *_ = book.values()
-                download_txt(
-                    urljoin(book_url, file_url), f'{book_id}. {title}'
-                )
-                download_image(urljoin(book_url, img_url), '', IMAGE_DIR)
-
-                delay = 0
-                break
-            except requests.exceptions.HTTPError as e:
-                logging.warning(e)
+                grab_book(book_url)
                 delay = 0
                 break
             except requests.exceptions.ConnectionError:
