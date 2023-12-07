@@ -22,8 +22,8 @@ def check_for_redirect(response):
         )
 
 
-def parse_book_page(html):
-    soup = BeautifulSoup(html, 'lxml')
+def parse_book_page(response):
+    soup = BeautifulSoup(response.text, 'lxml')
     file_link = soup.find('a', string='скачать txt')
     if not file_link:
         raise requests.exceptions.HTTPError(
@@ -93,7 +93,7 @@ if __name__ == "__main__":
                 response.raise_for_status()
                 check_for_redirect(response)
 
-                book = parse_book_page(response.text)
+                book = parse_book_page(response)
                 file_url, img_url, title, *_ = book.values()
                 download_txt(
                     urljoin(book_url, file_url), f'{book_id}. {title}'
