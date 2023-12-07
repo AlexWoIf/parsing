@@ -15,10 +15,21 @@ SCIFI_URL = 'https://tululu.org/l55/'
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description='Парсер скачивает книги с сайта tululu.org '
+                    'в указанном диапазоне id')
+    parser.add_argument('--start_page', type=int,
+                        help='Стартовая страница для парсинга', default=1, )
+    parser.add_argument('--end_page', type=int,
+                        help='Последняя страница для парсинга', default=701, )
+    args = parser.parse_args()
+    if args.start_page > args.end_page:
+        parser.error('Стартовая страница не может быть больше начальной.')
+
     logging.basicConfig(level=logging.INFO)
 
     book_urls = []
-    for page in range(1, 11):
+    for page in range(args.start_page, args.end_page):
         url = urljoin(SCIFI_URL, str(page)+'/')
         response = requests.get(url)
         response.raise_for_status()
