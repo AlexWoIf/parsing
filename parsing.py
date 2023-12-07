@@ -3,6 +3,7 @@ import os
 from time import sleep
 import logging
 import argparse
+import json
 from pathlib import Path
 import requests
 from bs4 import BeautifulSoup
@@ -12,6 +13,8 @@ from urllib.parse import urljoin
 BOOK_DIR = 'books/'
 IMAGE_DIR = 'images/'
 SITE_URL = 'https://tululu.org/'
+JSON_FILENAME = 'books.json'
+
 
 
 def retry(func):
@@ -116,17 +119,38 @@ if __name__ == "__main__":
                         help='Стартовый id для парсинга', default=1, )
     parser.add_argument('--end_id', type=int,
                         help='Последний id для парсинга', default=10, )
+    parser.add_argument('--dest_folder', type=str,
+                        help='Путь к каталогу с результатами парсинга: '
+                        'картинкам, книгам, JSON', default='', )
+    parser.add_argument('--skip_imgs',
+                        help='Не скачивать картинки', action="store_true", )
+    parser.add_argument('--skip_txt',
+                        help='Не скачивать книги', action="store_true", )
     args = parser.parse_args()
     if args.start_id > args.end_id:
         parser.error('Стартовый id не может быть больше конечного.')
 
     logging.basicConfig(level=logging.INFO)
 
-    Path(BOOK_DIR).mkdir(parents=True, exist_ok=True)
-    Path(IMAGE_DIR).mkdir(parents=True, exist_ok=True)
+    Path(args.dest_folder).mkdir(parents=True, exist_ok=True)
+    book_dir = Path(args.dest_folder).joinpath(BOOK_DIR)
+    if not args.skip_txt:
+        book_dir.mkdir(parents=True, exist_ok=True)
+    image_dir = Path(args.dest_folder).joinpath(IMAGE_DIR)
+    if not args.skip_imgs:
+        image_dir.mkdir(parents=True, exist_ok=True)
+
+    books = []
     for book_id in range(args.start_id, args.end_id+1):
         book_url = urljoin(SITE_URL, f'/b{book_id}/')
         try:
-            grab_book(book_url)
+            books.append(grab_book(book_url,
+                                   skip_images=args.skip_imgs,
+                                   skip_texts=args.skip_txt,
+                                   image_dir=image_dir, book_dir=book_dir, ))
         except requests.exceptions.HTTPError as e:
             logging.warning(e)
+
+    json_filepath = os.path.join(args.dest_folder, JSON_FILENAME)
+    with open(json_filepath, 'w') as json_file:
+        json.dump(books, json_file, ensure_ascii=False)
