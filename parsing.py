@@ -19,8 +19,8 @@ def retry(func):
         delay = 0
         while True:
             try:
-                func(*args, **kwargs)
-                break
+                return_value = func(*args, **kwargs)
+                return return_value
             except requests.exceptions.ConnectionError:
                 logging.warning('Сеть недоступна, пробуем еще раз. '
                                 f'Задержка перед попыткой {delay} секунд.')
@@ -90,6 +90,8 @@ def grab_book(book_url):
         raise requests.exceptions.HTTPError(
             f'В ссылке отсутствует ID книги: {book_url}'
         )
+    book_id = match[1]
+
     response = requests.get(book_url)
     response.raise_for_status()
     check_for_redirect(response)
@@ -100,6 +102,7 @@ def grab_book(book_url):
         urljoin(book_url, file_url), f'{book_id}. {title}'
     )
     download_image(urljoin(book_url, img_url), '', IMAGE_DIR)
+
     return book
 
 
