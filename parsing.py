@@ -16,7 +16,6 @@ SITE_URL = 'https://tululu.org/'
 JSON_FILENAME = 'books.json'
 
 
-
 def retry(func):
     def _wrapper(*args, **kwargs):
         delay = 0
