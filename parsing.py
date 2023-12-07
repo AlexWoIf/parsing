@@ -39,7 +39,7 @@ def check_for_redirect(response):
 
 def parse_book_page(response):
     soup = BeautifulSoup(response.text, 'lxml')
-    file_link = soup.find('a', string='скачать txt')
+    file_link = soup.select_one('a[title$="скачать книгу txt"]')
     if not file_link:
         raise requests.exceptions.HTTPError(
                 f'На странице книги {response.request.url} '
@@ -47,11 +47,10 @@ def parse_book_page(response):
         )
     return {
         'file_url': file_link['href'],
-        'img_src': soup.find('div', {'class': 'bookimage'})
-                       .find('img').get('src'),
+        'img_src': soup.select_one('div.bookimage  img').get('src'),
         'title': file_link['title'][:-20],
-        'author': soup.find('h1').find('a').text,
-        'comments': [c.text for c in soup.select('div[class=texts] > span')],
+        'author': soup.select_one('h1 a').text,
+        'comments': [c.text for c in soup.select('div.texts > span')],
         'genres': [a.text for a in soup.select('span.d_book > a')],
     }
 
