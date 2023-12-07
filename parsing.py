@@ -83,7 +83,8 @@ def download_image(url, filename, folder=BOOK_DIR):
 
 
 @retry
-def grab_book(book_url):
+def grab_book(book_url, skip_images=False, skip_texts=False,
+              book_dir=BOOK_DIR, image_dir=IMAGE_DIR):
     match = re.search(r'b(\d+)/$', book_url)
     if not match:
         raise requests.exceptions.HTTPError(
@@ -97,10 +98,12 @@ def grab_book(book_url):
 
     book = parse_book_page(response)
     file_url, img_url, title, *_ = book.values()
-    download_txt(
-        urljoin(book_url, file_url), f'{book_id}. {title}'
-    )
-    download_image(urljoin(book_url, img_url), '', IMAGE_DIR)
+    if not skip_texts:
+        download_txt(
+            urljoin(book_url, file_url), f'{book_id}. {title}', book_dir,
+        )
+    if not skip_images:
+        download_image(urljoin(book_url, img_url), '', image_dir)
 
     return book
 
