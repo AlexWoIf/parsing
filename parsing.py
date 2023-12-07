@@ -85,20 +85,22 @@ def download_image(url, filename, folder=BOOK_DIR):
 
 @retry
 def grab_book(book_url):
-    try:
-        response = requests.get(book_url)
-        response.raise_for_status()
-        check_for_redirect(response)
-
-        book = parse_book_page(response)
-        file_url, img_url, title, *_ = book.values()
-        download_txt(
-            urljoin(book_url, file_url), f'{book_id}. {title}'
+    match = re.search(r'b(\d+)/$', book_url)
+    if not match:
+        raise requests.exceptions.HTTPError(
+            f'В ссылке отсутствует ID книги: {book_url}'
         )
-        download_image(urljoin(book_url, img_url), '', IMAGE_DIR)
-        return book
-    except requests.exceptions.HTTPError as e:
-        logging.warning(e)
+    response = requests.get(book_url)
+    response.raise_for_status()
+    check_for_redirect(response)
+
+    book = parse_book_page(response)
+    file_url, img_url, title, *_ = book.values()
+    download_txt(
+        urljoin(book_url, file_url), f'{book_id}. {title}'
+    )
+    download_image(urljoin(book_url, img_url), '', IMAGE_DIR)
+    return book
 
 
 if __name__ == "__main__":
@@ -119,4 +121,7 @@ if __name__ == "__main__":
     Path(IMAGE_DIR).mkdir(parents=True, exist_ok=True)
     for book_id in range(args.start_id, args.end_id+1):
         book_url = urljoin(SITE_URL, f'/b{book_id}/')
-        grab_book(book_url)
+        try:
+            grab_book(book_url)
+        except requests.exceptions.HTTPError as e:
+            logging.warning(e)
