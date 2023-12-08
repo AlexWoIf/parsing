@@ -48,7 +48,7 @@ if __name__ == "__main__":
 
     book_urls = []
     for page in range(args.start_page, args.end_page):
-        page_url = urljoin(SCIFI_URL, str(page)+'/')
+        page_url = urljoin(SCIFI_URL, f'{page}/')
         try:
             book_urls += parse_category(page_url)
         except requests.exceptions.HTTPError as e:

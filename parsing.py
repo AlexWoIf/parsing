@@ -61,8 +61,8 @@ def download_txt(url, filename, folder=BOOK_DIR):
     response = requests.get(url)
     response.raise_for_status()
     check_for_redirect(response)
-    filename = re.sub(r'[^\w\d\. ]', '', filename) + '.txt'
-    filepath = os.path.join(folder, filename)
+    filename = re.sub(r'[^\w\d\. ]', '', filename)
+    filepath = os.path.join(folder, f'{filename}.txt')
     with open(filepath, 'wb') as file:
         file.write(response.content)
     return filepath
@@ -74,7 +74,7 @@ def download_image(url, filename, folder=BOOK_DIR):
     check_for_redirect(response)
     name = url.split('/')[-1]
     if filename:
-        ext = (name+'.').split('.')[1]
+        ext = (f'{name}.').split('.')[1]
         filename = ''.join(re.sub(r'[^\w\d\. ]', '', filename), '.', ext)
     else:
         filename = name
