@@ -2,6 +2,7 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 import json
 import re
 import argparse
+from more_itertools import chunked
 from livereload import Server
 
 
@@ -41,8 +42,8 @@ if __name__ == '__main__':
     )
     args = parser.parse_args()
     books_filepath = args.filepath
-    books = load_books_from_json(books_filepath)
+    books = list(chunked(load_books_from_json(books_filepath), 2))
 
     server = Server()
-    server.watch('./template.html', lambda:render_template(books))
+    server.watch('./template.html', lambda: render_template(books))
     server.serve(port=8000, default_filename='index.html',)
