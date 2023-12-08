@@ -1,26 +1,36 @@
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 import json
 import re
+import os
 import argparse
 from more_itertools import chunked
 from livereload import Server
+import urllib.parse
 
 
-FILEPATH = 'books.json'
+JSON_FILEPATH = 'books.json'
 IMAGE_DIR = 'images/'
+BOOK_DIR = 'books/'
+
+
+def get_txt_url(book_url, book_title):
+    book_id = re.sub(r'[^\d*]', '', book_url)
+    filename = re.sub(r'[^\w\d\. ]', '', f'{book_id}. {book_title}')
+    filepath = os.path.join(BOOK_DIR, f'{filename}.txt')
+    return urllib.parse.quote(filepath)
 
 
 def load_books_from_json(filepath):
     with open(filepath, "r") as books_file:
         books_json = books_file.read()
     books = [[re.sub(r'^.*/', IMAGE_DIR, book['img_src']),
-              book['title'], book['author']]
+              book['title'], book['author'],
+              get_txt_url(book['file_url'], book['title'])]
              for book in json.loads(books_json)]
     return books
 
 
 def render_template(books):
-    print('!')
     env = Environment(loader=FileSystemLoader('.'),
                       autoescape=select_autoescape(['html', 'xml']))
 
@@ -38,11 +48,12 @@ if __name__ == '__main__':
     )
     parser.add_argument(
         'filepath', help="Путь и название файла",
-        default=FILEPATH, nargs='?',
+        default=JSON_FILEPATH, nargs='?',
     )
     args = parser.parse_args()
     books_filepath = args.filepath
     books = list(chunked(load_books_from_json(books_filepath), 2))
+    render_template(books)
 
     server = Server()
     server.watch('./template.html', lambda: render_template(books))

@@ -14,7 +14,7 @@
     <div class="container">
       <div class="row">
         {% for pair in books %}
-          {% for img_src, title, author in pair %}
+          {% for img_src, title, author, txt_url in pair %}
           <div class="col">
             <div class="card mb-3" style="max-width: 540px;">
               <div class="row no-gutters">
@@ -25,6 +25,7 @@
                   <div class="card-body">
                     <h5 class="card-title">{{title}}</h5>
                     <p class="card-text">{{author}}</p>
+                    <a href="{{txt_url}}">Читать</a>
                     <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
                   </div>
                 </div>
