@@ -1,8 +1,8 @@
-from http.server import HTTPServer, SimpleHTTPRequestHandler
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 import json
 import re
 import argparse
+from livereload import Server
 
 
 FILEPATH = 'books.json'
@@ -18,6 +18,19 @@ def load_books_from_json(filepath):
     return books
 
 
+def render_template(books):
+    print('!')
+    env = Environment(loader=FileSystemLoader('.'),
+                      autoescape=select_autoescape(['html', 'xml']))
+
+    template = env.get_template('template.html')
+
+    rendered_page = template.render(books=books,)
+
+    with open('index.html', 'w', encoding="utf8") as file:
+        file.write(rendered_page)
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Укажите имя JSON файла с данными'
@@ -28,18 +41,8 @@ if __name__ == '__main__':
     )
     args = parser.parse_args()
     books_filepath = args.filepath
+    books = load_books_from_json(books_filepath)
 
-    env = Environment(loader=FileSystemLoader('.'),
-                      autoescape=select_autoescape(['html', 'xml']))
-
-    template = env.get_template('template.html')
-
-    rendered_page = template.render(
-        books=load_books_from_json(books_filepath),
-    )
-
-    with open('index.html', 'w', encoding="utf8") as file:
-        file.write(rendered_page)
-
-    server = HTTPServer(('0.0.0.0', 8000), SimpleHTTPRequestHandler)
-    server.serve_forever()
+    server = Server()
+    server.watch('./template.html', lambda:render_template(books))
+    server.serve(port=8000, default_filename='index.html',)
