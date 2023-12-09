@@ -1,6 +1,7 @@
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 import json
 import re
+import math
 import os
 from pathlib import Path
 import argparse
@@ -13,6 +14,7 @@ JSON_FILEPATH = 'books.json'
 IMAGE_DIR = '/images/'
 BOOK_DIR = '/books/'
 PAGE_DIR = '/pages/'
+BOOKS_ON_PAGE = 10
 
 
 def get_txt_url(book_url, book_title):
@@ -38,8 +40,12 @@ def render_template(json_filepath):
     template = env.get_template('template.html')
 
     all_books = load_books_from_json(json_filepath)
-    for i, page_books in enumerate(list(chunked(all_books, 10)), 1):
-        rendered_page = template.render(books=list(chunked(page_books, 2)),)
+    for i, page_books in enumerate(list(chunked(all_books, BOOKS_ON_PAGE)), 1):
+        rendered_page = template.render(
+            books=list(chunked(page_books, 2)),
+            current=i,
+            last=math.ceil(len(all_books)/BOOKS_ON_PAGE),
+        )
         filepath = Path(os.getcwd()+PAGE_DIR)/f'index{i}.html'
         with open(filepath, 'w', encoding="utf8") as file:
             file.write(rendered_page)
