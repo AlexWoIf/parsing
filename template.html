@@ -25,23 +25,23 @@
     <title>Библиотека</title>
   </head>
   <body>
-    <div class="container">
-        <nav aria-label="Page navigation">
-          <ul class="pagination">
-            <li class="page-item{{back_disabled}}">
-              <a class="page-link" {{back_href|safe}}>Назад</a>
+    <div class="container mt-3">
+      <nav aria-label="Page navigation">
+        <ul class="pagination">
+          <li class="page-item{{back_disabled}}">
+            <a class="page-link" {{back_href|safe}}>Назад</a>
+          </li>
+          {% for page in range(1, last+1) %}
+            <li class="page-item{% if current == page %} active{% endif %}">
+              <a class="page-link" href="index{{page}}.html">{{page}}</a>
             </li>
-            {% for page in range(1, last+1) %}
-              <li class="page-item{% if current == page %} active{% endif %}">
-                <a class="page-link" href="index{{page}}.html">{{page}}</a>
-              </li>
-            {% endfor %}
-            <li class="page-item{{fwd_disabled}}">
-              <a class="page-link" {{fwd_href|safe}}>Вперед</a>
-            </li>
-          </ul>
-        </nav>
-        <div class="row">
+          {% endfor %}
+          <li class="page-item{{fwd_disabled}}">
+            <a class="page-link" {{fwd_href|safe}}>Вперед</a>
+          </li>
+        </ul>
+      </nav>
+      <div class="row">
         {% for pair in books %}
           {% for img_src, title, author, txt_url in pair %}
             <div class="col">
