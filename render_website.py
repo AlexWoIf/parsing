@@ -10,9 +10,9 @@ from livereload import Server
 import urllib.parse
 
 
-JSON_FILEPATH = 'books.json'
-IMAGE_DIR = '/images/'
-BOOK_DIR = '/books/'
+JSON_FILEPATH = '/data/books.json'
+IMAGE_DIR = '/data/images/'
+BOOK_DIR = '/data/books/'
 PAGE_DIR = '/pages/'
 BOOKS_ON_PAGE = 10
 

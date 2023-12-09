@@ -2,6 +2,8 @@
 books/
 images/
 pages/
+data/
+static/
 *.json
 index.html
 
