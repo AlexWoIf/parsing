@@ -2,6 +2,7 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 import json
 import re
 import os
+from pathlib import Path
 import argparse
 from more_itertools import chunked
 from livereload import Server
@@ -9,8 +10,9 @@ import urllib.parse
 
 
 JSON_FILEPATH = 'books.json'
-IMAGE_DIR = 'images/'
-BOOK_DIR = 'books/'
+IMAGE_DIR = '/images/'
+BOOK_DIR = '/books/'
+PAGE_DIR = '/pages/'
 
 
 def get_txt_url(book_url, book_title):
@@ -30,16 +32,17 @@ def load_books_from_json(filepath):
     return books
 
 
-def render_template(books):
+def render_template(json_filepath):
     env = Environment(loader=FileSystemLoader('.'),
                       autoescape=select_autoescape(['html', 'xml']))
-
     template = env.get_template('template.html')
 
-    rendered_page = template.render(books=books,)
-
-    with open('index.html', 'w', encoding="utf8") as file:
-        file.write(rendered_page)
+    all_books = load_books_from_json(json_filepath)
+    for i, page_books in enumerate(list(chunked(all_books, 10)), 1):
+        rendered_page = template.render(books=list(chunked(page_books, 2)),)
+        filepath = Path(os.getcwd()+PAGE_DIR)/f'index{i}.html'
+        with open(filepath, 'w', encoding="utf8") as file:
+            file.write(rendered_page)
 
 
 if __name__ == '__main__':
@@ -52,9 +55,10 @@ if __name__ == '__main__':
     )
     args = parser.parse_args()
     books_filepath = args.filepath
-    books = list(chunked(load_books_from_json(books_filepath), 2))
-    render_template(books)
+    Path(os.getcwd()+PAGE_DIR).mkdir(parents=True, exist_ok=True)
+    print(Path(os.getcwd()+PAGE_DIR))
+    render_template(books_filepath)
 
     server = Server()
-    server.watch('./template.html', lambda: render_template(books))
+    server.watch('./template.html', lambda: render_template(books_filepath))
     server.serve(port=8000, default_filename='index.html',)

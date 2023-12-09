@@ -1,6 +1,7 @@
 # Project specific
 books/
 images/
+pages/
 *.json
 index.html
 
