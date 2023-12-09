@@ -3,31 +3,30 @@ import json
 import re
 import math
 import os
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 import argparse
 from more_itertools import chunked
 from livereload import Server
-import urllib.parse
 
 
-JSON_FILEPATH = '/data/books.json'
-IMAGE_DIR = '/data/images/'
-BOOK_DIR = '/data/books/'
-PAGE_DIR = '/pages/'
+JSON_FILEPATH = './data/books.json'
+IMAGE_DIR = './data/images/'
+BOOK_DIR = './data/books/'
+PAGE_DIR = './pages/'
 BOOKS_ON_PAGE = 10
 
 
 def get_txt_url(book_url, book_title):
     book_id = re.sub(r'[^\d*]', '', book_url)
     filename = re.sub(r'[^\w\d\. ]', '', f'{book_id}. {book_title}')
-    filepath = os.path.join(BOOK_DIR, f'{filename}.txt')
-    return urllib.parse.quote(filepath)
+    filepath = PurePosixPath('..')/BOOK_DIR/f'{filename}.txt'
+    return filepath
 
 
 def load_books_from_json(filepath):
     with open(filepath, "r") as books_file:
         books_json = books_file.read()
-    books = [[re.sub(r'^.*/', IMAGE_DIR, book['img_src']),
+    books = [[PurePosixPath('..')/re.sub(r'^.*/', IMAGE_DIR, book['img_src']),
               book['title'],
               book['author'],
               get_txt_url(book['file_url'], book['title']),
@@ -45,10 +44,11 @@ def render_template(json_filepath):
     for i, page_books in enumerate(list(chunked(all_books, BOOKS_ON_PAGE)), 1):
         rendered_page = template.render(
             books=list(chunked(page_books, 2)),
+            pages_dir=PAGE_DIR,
             current=i,
             last=math.ceil(len(all_books)/BOOKS_ON_PAGE),
         )
-        filepath = Path(os.getcwd()+PAGE_DIR)/f'index{i}.html'
+        filepath = Path(os.getcwd())/PAGE_DIR/f'index{i}.html'
         with open(filepath, 'w', encoding="utf8") as file:
             file.write(rendered_page)
 
@@ -63,8 +63,6 @@ if __name__ == '__main__':
     )
     args = parser.parse_args()
     books_filepath = args.filepath
-    Path(os.getcwd()+PAGE_DIR).mkdir(parents=True, exist_ok=True)
-    print(Path(os.getcwd()+PAGE_DIR))
     render_template(books_filepath)
 
     server = Server()

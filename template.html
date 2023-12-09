@@ -20,13 +20,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="/static/bootstrap.min.css" >
+    <link rel="stylesheet" href="../static/bootstrap.min.css" >
 
     <title>Библиотека</title>
-    <link rel="icon" type="image/x-icon" href="/static/favicons/favicon.ico">
-    <link rel="icon" type="image/png" href="/static/favicons/favicon-16x16.png" sizes="16x16">
-    <link rel="icon" type="image/png" href="/static/favicons/favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="/static/favicons/favicon-48x48.png" sizes="48x48">
+    <link rel="icon" type="image/x-icon" href="../static/favicons/favicon.ico">
+    <link rel="icon" type="image/png" href="../static/favicons/favicon-16x16.png" sizes="16x16">
+    <link rel="icon" type="image/png" href="../static/favicons/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="../static/favicons/favicon-48x48.png" sizes="48x48">
   </head>
   <body>
     <div class="container mt-3">
@@ -61,7 +61,7 @@
                       {% for genre in genres %}
                         <span class="badge badge-light">{{genre}}</span>
                       {% endfor %}
-                      <p><a href="{{txt_url}}">Читать</a></p>
+                      <p><a href="{{txt_url|urlencode}}">Читать</a></p>
                     </div>
                   </div>
                 </div>
@@ -73,8 +73,8 @@
       </div>
     </div>
 
-    <script src="/static/jquery-3.5.1.slim.min.js"></script>
-    <script src="/static/bootstrap.bundle.min.js" ></script>
+    <script src="../static/jquery-3.5.1.slim.min.js"></script>
+    <script src="../static/bootstrap.bundle.min.js" ></script>
 
   </body>
 </html>
