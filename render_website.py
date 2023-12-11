@@ -15,7 +15,7 @@ DOCROOT = './'
 IMAGE_DIR = './media/images/'
 BOOK_DIR = './media/books/'
 PAGE_DIR = './pages/'
-NUM_COLUMNS = 2
+COLUMNS = 2
 BOOKS_ON_PAGE = 10
 
 
@@ -28,13 +28,13 @@ def get_txt_url(book_url, book_title):
 
 def load_books_from_json(filepath):
     with open(filepath, 'r') as books_file:
-        books_json = json.load(books_file)
+        books_sourse = json.load(books_file)
     books = [[PurePosixPath('..')/re.sub(r'^.*/', IMAGE_DIR, book['img_src']),
               book['title'],
               book['author'],
               get_txt_url(book['file_url'], book['title']),
               book['genres'],]
-             for book in books_json]
+             for book in books_sourse]
     return books
 
 
@@ -47,7 +47,7 @@ def render_template(json_filepath):
     all_pages = list(chunked(all_books, BOOKS_ON_PAGE))
     for page_num, page_books in enumerate(all_pages, 1):
         rendered_page = template.render(
-            books=list(chunked(page_books, NUM_COLUMNS)),
+            books=list(chunked(page_books, COLUMNS)),
             pages_dir=PAGE_DIR,
             current=page_num,
             last=math.ceil(len(all_books)/BOOKS_ON_PAGE),
