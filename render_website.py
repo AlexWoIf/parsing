@@ -15,6 +15,7 @@ DOCROOT = './docs/'
 IMAGE_DIR = './data/images/'
 BOOK_DIR = './data/books/'
 PAGE_DIR = './pages/'
+NUM_COLUMNS = 2
 BOOKS_ON_PAGE = 10
 
 
@@ -46,7 +47,7 @@ def render_template(json_filepath):
     all_pages = list(chunked(all_books, BOOKS_ON_PAGE))
     for page_num, page_books in enumerate(all_pages, 1):
         rendered_page = template.render(
-            books=list(chunked(page_books, 2)),
+            books=list(chunked(page_books, NUM_COLUMNS)),
             pages_dir=PAGE_DIR,
             current=page_num,
             last=math.ceil(len(all_books)/BOOKS_ON_PAGE),
