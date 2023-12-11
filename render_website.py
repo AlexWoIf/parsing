@@ -69,5 +69,5 @@ if __name__ == '__main__':
     server = Server()
     server.watch('./template.html', lambda: render_template(books_filepath))
     server.serve(port=8000,
-                 root=DOCROOT,
-                 default_filename='pages/index1.html',)
+                 root=Path(DOCROOT),
+                 default_filename='index.html',)
