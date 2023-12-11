@@ -1,11 +1,4 @@
 # Project specific
-books/
-images/
-pages/
-data/
-static/
-*.json
-index.html
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -28,7 +21,7 @@ build/
 develop-eggs/
 dist/
 downloads/
-media/
+#media/
 eggs/
 .eggs/
 lib/
