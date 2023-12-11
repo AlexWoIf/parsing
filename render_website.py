@@ -43,14 +43,15 @@ def render_template(json_filepath):
     template = env.get_template('template.html')
 
     all_books = load_books_from_json(json_filepath)
-    for i, page_books in enumerate(list(chunked(all_books, BOOKS_ON_PAGE)), 1):
+    all_pages = list(chunked(all_books, BOOKS_ON_PAGE))
+    for page_num, page_books in enumerate(all_pages, 1):
         rendered_page = template.render(
             books=list(chunked(page_books, 2)),
             pages_dir=PAGE_DIR,
-            current=i,
+            current=page_num,
             last=math.ceil(len(all_books)/BOOKS_ON_PAGE),
         )
-        filepath = Path(os.getcwd())/DOCROOT/PAGE_DIR/f'index{i}.html'
+        filepath = Path(os.getcwd())/DOCROOT/PAGE_DIR/f'index{page_num}.html'
         with open(filepath, 'w', encoding="utf8") as file:
             file.write(rendered_page)
 
