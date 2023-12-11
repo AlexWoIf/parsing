@@ -10,10 +10,10 @@ from livereload import Server
 from more_itertools import chunked
 
 
-JSON_FILEPATH = './data/books.json'
-DOCROOT = './docs/'
-IMAGE_DIR = './data/images/'
-BOOK_DIR = './data/books/'
+JSON_FILEPATH = './media/books.json'
+DOCROOT = './'
+IMAGE_DIR = './media/images/'
+BOOK_DIR = './media/books/'
 PAGE_DIR = './pages/'
 NUM_COLUMNS = 2
 BOOKS_ON_PAGE = 10
