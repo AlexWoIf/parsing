@@ -27,7 +27,7 @@ def get_txt_url(book_url, book_title):
 
 
 def load_books_from_json(filepath):
-    with open(filepath, "r") as books_file:
+    with open(filepath, 'r') as books_file:
         books_json = json.loads(books_file)
     books = [[PurePosixPath('..')/re.sub(r'^.*/', IMAGE_DIR, book['img_src']),
               book['title'],
@@ -53,7 +53,7 @@ def render_template(json_filepath):
             last=math.ceil(len(all_books)/BOOKS_ON_PAGE),
         )
         filepath = Path(os.getcwd())/DOCROOT/PAGE_DIR/f'index{page_num}.html'
-        with open(filepath, 'w', encoding="utf8") as file:
+        with open(filepath, 'w', encoding='utf8') as file:
             file.write(rendered_page)
 
 
@@ -62,7 +62,7 @@ if __name__ == '__main__':
         description='Укажите имя JSON файла с данными'
     )
     parser.add_argument(
-        'filepath', help="Путь и название файла",
+        'filepath', help='Путь и название файла',
         default=Path(DOCROOT)/JSON_FILEPATH, nargs='?',
     )
     args = parser.parse_args()
