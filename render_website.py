@@ -1,12 +1,13 @@
-from jinja2 import Environment, FileSystemLoader, select_autoescape
+import argparse
 import json
-import re
 import math
 import os
+import re
 from pathlib import Path, PurePosixPath
-import argparse
-from more_itertools import chunked
+
+from jinja2 import Environment, FileSystemLoader, select_autoescape
 from livereload import Server
+from more_itertools import chunked
 
 
 JSON_FILEPATH = './data/books.json'
