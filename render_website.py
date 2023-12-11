@@ -10,6 +10,7 @@ from livereload import Server
 
 
 JSON_FILEPATH = './data/books.json'
+DOCROOT = './docs/'
 IMAGE_DIR = './data/images/'
 BOOK_DIR = './data/books/'
 PAGE_DIR = './pages/'
@@ -48,7 +49,7 @@ def render_template(json_filepath):
             current=i,
             last=math.ceil(len(all_books)/BOOKS_ON_PAGE),
         )
-        filepath = Path(os.getcwd())/PAGE_DIR/f'index{i}.html'
+        filepath = Path(os.getcwd())/DOCROOT/PAGE_DIR/f'index{i}.html'
         with open(filepath, 'w', encoding="utf8") as file:
             file.write(rendered_page)
 
@@ -59,7 +60,7 @@ if __name__ == '__main__':
     )
     parser.add_argument(
         'filepath', help="Путь и название файла",
-        default=JSON_FILEPATH, nargs='?',
+        default=Path(DOCROOT)/JSON_FILEPATH, nargs='?',
     )
     args = parser.parse_args()
     books_filepath = args.filepath
@@ -67,4 +68,6 @@ if __name__ == '__main__':
 
     server = Server()
     server.watch('./template.html', lambda: render_template(books_filepath))
-    server.serve(port=8000, default_filename='index.html',)
+    server.serve(port=8000,
+                 root=DOCROOT,
+                 default_filename='pages/index1.html',)
