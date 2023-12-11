@@ -62,7 +62,8 @@ python parse_tululu_category.py [-h] [--start_id START_ID] [--end_id END_ID]
 python render_website.py [JSON datafile]
 ```
 
-В результате работы скрипта из шаблона `template.html` и данных о книгах из JSON-файла генерируются статические страницы в папке `./pages/`
+В результате работы скрипта из шаблона `template.html` и данных о книгах из JSON-файла генерируются статические страницы в папке `./docs/pages/`.
+Локальную версию сайта можно открыть в браузере после запуска скрипта по адресу [http://localhost:8000/](http://localhost:8000/) либо открыть файл `index.html` из папки `docs`.
 
 ## Цель проекта
 
