@@ -28,7 +28,7 @@ def get_txt_url(book_url, book_title):
 
 def load_books_from_json(filepath):
     with open(filepath, 'r') as books_file:
-        books_json = json.loads(books_file)
+        books_json = json.load(books_file)
     books = [[PurePosixPath('..')/re.sub(r'^.*/', IMAGE_DIR, book['img_src']),
               book['title'],
               book['author'],
