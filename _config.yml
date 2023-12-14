@@ -2,3 +2,4 @@ source: ./pages
 exclude:
   - README.md
   - requirements.txt
+  - *.py
