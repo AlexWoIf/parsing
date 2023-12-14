@@ -1,1 +1,4 @@
-source: pages
+source: ./pages
+exclude:
+  - README.md
+  - requirements.txt
