@@ -1,5 +1,5 @@
-source: ./pages
 exclude:
   - README.md
   - requirements.txt
-  - *.py
+  - "*.py"
+  - template.html
